@@ -3,6 +3,20 @@ census-data
 
 lbth census data
 
+## installation
+
+create a conda environment frmo the supplied `requirements.yml`
+
+```sh
+conda env update --name census-data --file requirements.yml
+```
+
+if the pip installs fail, then run this
+
+```sh
+pip install -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+```
+
 Project Organization
 ------------
 
