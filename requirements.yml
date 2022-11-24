@@ -271,4 +271,4 @@ dependencies:
     - xlrd==2.0.1
     - xyzservices==2022.6.0
     - zopfli==0.2.1
-prefix: C:\Users\joseph.leach\AppData\Local\Programs\Git\path\to\the\parent_dir\census-data
+prefix: C:\Users\joseph.leach\code\Anaconda\envs\census-data
