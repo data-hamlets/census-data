@@ -5,7 +5,7 @@ lbth census data
 
 ## installation
 
-create a conda environment frmo the supplied `requirements.yml`
+create a conda environment from the supplied `requirements.yml`
 
 ```sh
 conda env update --name census-data --file requirements.yml
