@@ -17,6 +17,14 @@ if the pip installs fail, then run this
 pip install -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
 ```
 
+### updating the installation environment
+
+e.g. if you've added more packages and want to update the environment file (the piped grep command removes the potentially identity disclosing prefix line from the end of the export)
+
+```sh
+conda env export | grep -v "^prefix: " > requirements.yml
+```
+
 Project Organization
 ------------
 
