@@ -1,0 +1,129 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# Load libraries
+library(tmap)
+library(sf)
+library(geojsonio)
+library(dplyr)        # data wrangling
+library(cartogram)    # for the cartogram
+library(ggplot2)      # to realize the plots
+library(broom)        # from geospatial format to data frame
+library(tweenr)       # to create transition dataframe between 2 states
+library(gganimate)    # To realize the animation
+library(maptools)     # world boundaries coordinates
+library(viridis)      # for a nice color palette
+```
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+```{r}
+spdf <- geojson_read("../data/external/lbth_oa21.geojson",  what = "sp")
+
+```
+
+
+```{r}
+lbth_popden_oa21 = read.csv('../data/external/lbth_census_2021_pop_density_oa.csv', header=TRUE)
+```
+
+
+```{r}
+lbth_popden_oa21['OA21CD'] = lbth_popden_oa21['GEOGRAPHY_CODE']
+df = merge(spdf, lbth_popden_oa21, on='OA21CD')
+```
+
+
+```{r}
+sfno <- st_as_sf(df)
+choropleth <- st_transform(sfno, crs = 3857)
+# st_crs(sfproj)
+```
+
+
+```{r}
+cartogram <- cartogram_cont(choropleth, "OBS_VALUE", itermax = 5)
+
+```
+
+```{r}
+ggp = ggplot() +
+  geom_sf(data = cartogram, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
+   scale_fill_viridis(direction = -1, label = scales::comma) +
+    scale_color_viridis(direction = -1, label = scales::comma)
+
+```
+
+```{r}
+ggp
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = choropleth, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
+   scale_fill_viridis(direction = -1, label = scales::comma) +
+    scale_color_viridis(direction = -1, label = scales::comma)
+
+```
+
+```{r}
+# prepare animation
+
+# Give an id to every single point that compose the boundaries
+cartogram$id <- 1 #seq(1,nrow(cartogram))
+choropleth$id <- 2 #seq(1,nrow(choropleth))
+ 
+# Bind both map info in a data frame. 3 states: map --> cartogram --> map
+data <- rbind(choropleth, cartogram)
+
+```
+
+```{r}
+library(gifski)
+
+```
+
+
+```{r}
+# Plot
+data$Population_density <- data$OBS_VALUE
+pop_label <- expression(People ~ per ~ km^2)
+
+anim <- data %>% ggplot() + 
+    geom_sf() + aes(fill = Population_density, color = Population_density) +
+    scale_fill_viridis(name=pop_label, direction = -1, label = scales::comma, option = "A") +
+    scale_color_viridis(name=pop_label, direction = -1, label = scales::comma, option = "A") +
+    labs( title = "Tower Hamlets", subtitle="Cartogram of population density" ) +
+    transition_states(id, transition_length = 2, state_length = 1) +
+    theme(
+      text = element_text(color = "#22211d"), 
+      plot.background = element_rect(fill = "#f5f5f4", color = NA), 
+      panel.background = element_rect(fill = "#f5f5f4", color = NA), 
+      legend.background = element_rect(fill = "#f5f5f4", color = NA),
+      plot.title = element_text(size= 22, hjust=0.5, color = "#4e4d47", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+      plot.subtitle = element_text(size= 13, hjust=0.5, color = "#4e4d47", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+      axis.text.x=element_blank(), #remove x axis labels
+      axis.ticks.x=element_blank(), #remove x axis ticks
+      axis.text.y=element_blank(),  #remove y axis labels
+      axis.ticks.y=element_blank()  #remove y axis ticks
+    ) 
+```
+
+
+```{r}
+# Video output
+animate(
+  anim + ease_aes('cubic-in-out'),
+  renderer = gifski_renderer()
+)
+```
+
+```{r}
+anim_save("lbth_census21_pop_density.gif", anim)
+
+```
+
+
