@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "animated cartogram"
 output: html_notebook
 ---
 
@@ -14,84 +14,86 @@ library(ggplot2)      # to realize the plots
 library(broom)        # from geospatial format to data frame
 library(tweenr)       # to create transition dataframe between 2 states
 library(gganimate)    # To realize the animation
+library(gifski)       # render gganimate as gif
 library(maptools)     # world boundaries coordinates
 library(viridis)      # for a nice color palette
+
 ```
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
+spatial data
 ```{r}
 spdf <- geojson_read("../data/external/lbth_oa21.geojson",  what = "sp")
 
 ```
 
-
+census data
 ```{r}
 lbth_popden_oa21 = read.csv('../data/external/lbth_census_2021_pop_density_oa.csv', header=TRUE)
 ```
 
-
+merge
 ```{r}
 lbth_popden_oa21['OA21CD'] = lbth_popden_oa21['GEOGRAPHY_CODE']
 df = merge(spdf, lbth_popden_oa21, on='OA21CD')
 ```
 
-
+create choropleth spatial data frame
 ```{r}
 sfno <- st_as_sf(df)
 choropleth <- st_transform(sfno, crs = 3857)
 # st_crs(sfproj)
 ```
 
-
+create cartogram spatial data frame
 ```{r}
 cartogram <- cartogram_cont(choropleth, "OBS_VALUE", itermax = 5)
 
 ```
 
+plot choropleth
 ```{r}
-ggp = ggplot() +
-  geom_sf(data = cartogram, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
-   scale_fill_viridis(direction = -1, label = scales::comma) +
-    scale_color_viridis(direction = -1, label = scales::comma)
-
-```
-
-```{r}
-ggp
-```
-
-```{r}
+# choropleth
 ggplot() +
   geom_sf(data = choropleth, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
-   scale_fill_viridis(direction = -1, label = scales::comma) +
-    scale_color_viridis(direction = -1, label = scales::comma)
+   scale_fill_viridis(direction = -1, label = scales::comma, option = "A") +
+    scale_color_viridis(direction = -1, label = scales::comma, option = "A")
 
 ```
 
+plot cartogram
 ```{r}
-# prepare animation
+# cartogram
+ggplot() +
+  geom_sf(data = cartogram, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
+   scale_fill_viridis(direction = -1, label = scales::comma, option = "A") +
+    scale_color_viridis(direction = -1, label = scales::comma, option = "A")
 
-# Give an id to every single point that compose the boundaries
+```
+
+
+prepare animation
+
+```{r}
+
+# give each dataframe an id column
+# id is used for animation tweening
 cartogram$id <- 1 #seq(1,nrow(cartogram))
 choropleth$id <- 2 #seq(1,nrow(choropleth))
  
-# Bind both map info in a data frame. 3 states: map --> cartogram --> map
+# stack dataframes ready to tween
 data <- rbind(choropleth, cartogram)
 
 ```
 
 ```{r}
-library(gifski)
-
-```
-
-
-```{r}
 # Plot
 data$Population_density <- data$OBS_VALUE
 pop_label <- expression(People ~ per ~ km^2)
+```
 
+```{r}
 anim <- data %>% ggplot() + 
     geom_sf() + aes(fill = Population_density, color = Population_density) +
     scale_fill_viridis(name=pop_label, direction = -1, label = scales::comma, option = "A") +
@@ -112,17 +114,24 @@ anim <- data %>% ggplot() +
     ) 
 ```
 
+```{r}
+anim
+```
+
 
 ```{r}
 # Video output
 animate(
   anim + ease_aes('cubic-in-out'),
+  # renders as a sequence of images
+  # renderer = file_renderer(dir = "../data/interim/", prefix = "gganim_plot", overwrite = FALSE)
+  # makes an animated gif
   renderer = gifski_renderer()
 )
 ```
 
 ```{r}
-anim_save("lbth_census21_pop_density.gif", anim)
+anim_save("../data/processed/lbth_census21_pop_density.gif", anim)
 
 ```
 
