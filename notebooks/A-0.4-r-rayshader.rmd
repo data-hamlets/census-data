@@ -1,0 +1,91 @@
+---
+title: "rayshader"
+output: html_notebook
+---
+
+rayshader
+
+```{r}
+# TidyTuesday - Week 49
+# Submission by Camilo Martínez Burgos (@camartinezbu)
+
+# Load packages ----
+library(tidyverse)
+library(sf)
+library(rayshader)
+library(viridis)
+
+```
+
+spatial data
+```{r}
+spdf <- st_read("../data/external/lbth_oa21.geojson")
+
+```
+
+census data
+```{r}
+lbth_popden_oa21 = read.csv('../data/external/lbth_census_2021_pop_density_oa.csv', header=TRUE)
+```
+
+merge
+```{r}
+lbth_popden_oa21['OA21CD'] = lbth_popden_oa21['GEOGRAPHY_CODE']
+df = merge(spdf, lbth_popden_oa21, on='OA21CD')
+
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data = df, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
+   scale_fill_viridis(direction = -1, label = scales::comma, option = "D") +
+    scale_color_viridis(direction = -1, label = scales::comma, option = "D")
+```
+
+
+```{r}
+my_plot <- ggplot(choropleth) +
+  geom_sf(aes(fill = OBS_VALUE), lwd = 0, color = NA) +
+   # scale_fill_viridis(direction = -1, label = scales::comma, option = "D") +
+  theme(
+    plot.background = element_blank(), #rect(fill = "#FAF1F0"),
+    panel.background = element_blank(),
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "none"
+  )
+
+plot_gg(my_plot, multicore = TRUE, width = 3, height = 3,
+        solid = FALSE, shadow_darkness = 0.05,
+        solidcolor = "#FAF1F0",
+        shadow = FALSE, scale = 75,
+        windowsize = 1200,
+        background = "#ffffff",
+        theta = 0, phi = 30, zoom = 0.25)
+
+# Export plot
+
+# render_snapshot("2022/2022-week49/plots/plot_w49.png")
+```
+
+```{r}
+gg_nc = ggplot(df) +
+  geom_sf(aes(fill = OBS_VALUE), lwd = 0, color = NA) +
+  # scale_fill_viridis("Density") +
+  theme_void() +
+  
+
+plot_gg(gg_nc, multicore = TRUE, width = 3, height = 3,
+        solid = FALSE, shadow_darkness = 0.05,
+        solidcolor = "#FAF1F0",
+        shadow = FALSE, scale = 75,
+        windowsize = 600,
+        background = "#ffffff",
+        theta = 0, phi = 30, zoom = 0.25)
+render_depth(focallength=100,focus=0.72)
+```
+
