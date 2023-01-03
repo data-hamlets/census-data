@@ -7,7 +7,7 @@ output: html_notebook
 # Load libraries
 library(tmap)
 library(sf)
-library(geojsonio)
+library(geojsonio)    # for downloading geojson boundaries
 library(dplyr)        # data wrangling
 library(cartogram)    # for the cartogram
 library(ggplot2)      # to realize the plots
@@ -57,8 +57,8 @@ plot choropleth
 # choropleth
 ggplot() +
   geom_sf(data = choropleth, aes(fill = OBS_VALUE, color=OBS_VALUE)) +
-   scale_fill_viridis(direction = -1, label = scales::comma, option = "A") +
-    scale_color_viridis(direction = -1, label = scales::comma, option = "A")
+   scale_fill_viridis(direction = -1, label = scales::comma, option = "D") +
+    scale_color_viridis(direction = -1, label = scales::comma, option = "D")
 
 ```
 
@@ -95,10 +95,10 @@ pop_label <- expression(People ~ per ~ km^2)
 
 ```{r}
 anim <- data %>% ggplot() + 
-    geom_sf() + aes(fill = Population_density, color = Population_density) +
+    geom_sf() + aes(fill = Population_density, color = Population_density, show.legend = FALSE) +
     scale_fill_viridis(name=pop_label, direction = -1, label = scales::comma, option = "A") +
     scale_color_viridis(name=pop_label, direction = -1, label = scales::comma, option = "A") +
-    labs( title = "Tower Hamlets", subtitle="Cartogram of population density" ) +
+    # labs( title = "Tower Hamlets", subtitle="Cartogram of population density" ) +
     transition_states(id, transition_length = 2, state_length = 1) +
     theme(
       text = element_text(color = "#22211d"), 
