@@ -120,7 +120,7 @@ anim
 
 
 ```{r}
-# Video output
+# output choice
 animate(
   anim + ease_aes('cubic-in-out'),
   # renders as a sequence of images
