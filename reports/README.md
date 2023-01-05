@@ -6,5 +6,4 @@ the dashboard downloads census data from [nomis topic summaries](https://www.nom
 
 * _Geography_ currently we are using 2021 output areas (where possible), these are the smallest unit of aggregation, and can be fairly accurately assigned to wards, although there are many [OAs that don't fit perfectly](https://nbviewer.org/github/data-hamlets/census-data/blob/main/notebooks/0.2-lbth-oa-ward-overlaps.ipynb). 
 * _Percent_ this is good to use as it normalises comparisons between areas
-* _Format_ choose Nomis API as this gives tabulated csv ready for power bi
-
+* _Format_ choose Nomis API as this gives tabulated `data.csv` url you can copy to power bi when accessing nomis data via the `get data -> web` download option
