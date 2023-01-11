@@ -21,10 +21,12 @@ the dashboard downloads census data from [nomis topic summaries](https://www.nom
 * adding [custom map geography](https://github.com/data-hamlets/census-data/blob/main/reports/lbth_oa21.topo.json)  
 
 ## census data  
-* getting data from [nomis](https://www.nomisweb.co.uk/sources/census_2021)  * example of [TS067 - highest level of qualification](https://www.nomisweb.co.uk/datasets/c2021ts067)  
+* getting data from [nomis](https://www.nomisweb.co.uk/sources/census_2021)  
+  * example of [TS067 - highest level of qualification](https://www.nomisweb.co.uk/datasets/c2021ts067)  
 
 ## link the data to the map  
 * link the data to the map by location (`GEOGRAPHY_CODE`) and colour saturation (`OBS_VALUE`)  
 * add a *slicer* control  
 * what about wards?  
-* match oas to wards using a [lookup](https://data-hamlets.github.io/open-data-tower-hamlets/datasets/census-2021-lookups/) 
+  * match oas to wards using a [lookup](https://data-hamlets.github.io/open-data-tower-hamlets/datasets/census-2021-lookups/) 
+  * add a *slicer* control for wards
