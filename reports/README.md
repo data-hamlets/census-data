@@ -27,6 +27,7 @@ the dashboard downloads census data from [nomis topic summaries](https://www.nom
 ## link the data to the map  
 * link the data to the map by location (`GEOGRAPHY_CODE`) and colour saturation (`OBS_VALUE`)  
 * add a *slicer* control  
+* add a *scatter plot* vis  
 * what about wards?  
   * match oas to wards using a [lookup](https://data-hamlets.github.io/open-data-tower-hamlets/datasets/census-2021-lookups/) 
   * add a *slicer* control for wards
