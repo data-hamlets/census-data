@@ -13,7 +13,7 @@ the dashboard downloads census data from [nomis topic summaries](https://www.nom
 # wednesday-workshop
 
 ## branding  
-* using a [corporate background](https://github.com/data-hamlets/census-data/blob/main/reports/corporate-background.png)  
+* using a corporate background
 
 ## mapping  
 * enabling *shape map* vis (choropleth)  
